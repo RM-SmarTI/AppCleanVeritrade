@@ -4,11 +4,8 @@ from io import BytesIO
 
 # Función para procesar los datos
 def procesar_datos(veritrade_file, palabras_excluir, palabras_incluir):
-    palabras_excluir = palabras_excluir.split(',')
-    palabras_excluir = [palabra.strip() for palabra in palabras_excluir]
-
-    palabras_incluir = palabras_incluir.split(',')
-    palabras_incluir = [palabra.strip() for palabra in palabras_incluir]
+    palabras_excluir = [palabra.strip() for palabra in palabras_excluir.split(',') if palabra.strip()]
+    palabras_incluir = [palabra.strip() for palabra in palabras_incluir.split(',') if palabra.strip()]
     
     try:
         # Leer el archivo subido correctamente
@@ -19,11 +16,13 @@ def procesar_datos(veritrade_file, palabras_excluir, palabras_incluir):
         veritrade_clean = veritrade[~veritrade.DComercial.str.contains('|'.join(palabras_excluir), case=False)]
         veritrade_excluir = veritrade[veritrade.DComercial.str.contains('|'.join(palabras_excluir), case=False)]
 
-        # Incluir registros
-        veritrade_incluir = veritrade_excluir[veritrade_excluir.DComercial.str.contains('|'.join(palabras_incluir), case=False)]
-        veritrade_excluir2 = veritrade_excluir[~veritrade_excluir.DComercial.str.contains('|'.join(palabras_incluir), case=False)]
-
-        veritrade_clean2 = pd.concat([veritrade_clean, veritrade_incluir], ignore_index=True)
+        if palabras_incluir:  # Si hay palabras a incluir
+            veritrade_incluir = veritrade_excluir[veritrade_excluir.DComercial.str.contains('|'.join(palabras_incluir), case=False)]
+            veritrade_excluir2 = veritrade_excluir[~veritrade_excluir.DComercial.str.contains('|'.join(palabras_incluir), case=False)]
+            veritrade_clean2 = pd.concat([veritrade_clean, veritrade_incluir], ignore_index=True)
+        else: # Si palabras_incluir está vacío, no filtramos
+            veritrade_clean2 = veritrade_clean
+            veritrade_excluir2 = veritrade_excluir
         
         # Guardar el archivo procesado en memoria
         output = BytesIO()
