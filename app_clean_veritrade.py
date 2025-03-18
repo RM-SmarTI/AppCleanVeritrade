@@ -39,7 +39,7 @@ def procesar_datos(veritrade_file, palabras_excluir, palabras_incluir):
 
 # Configuración de la aplicación Streamlit
 st.title("Procesador de Veritrade")
-st.write("Sube un archivo Excel de Veritrade, ingresa palabras a excluir y descarga el archivo procesado.")
+st.write("Sube un archivo Excel de Veritrade, ingresa palabras a excluir y descarga el archivo procesado..")
 
 # Cargar archivo de Veritrade
 archivo_veritrade = st.file_uploader("Sube el archivo Excel de Veritrade", type=["xlsx", "xls"])
